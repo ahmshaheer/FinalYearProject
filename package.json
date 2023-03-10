@@ -1,0 +1,82 @@
+{
+  "name": "fe-hec-pr",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/material": "^5.8.2",
+    "@recogito/annotorious": "^2.7.6",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@trpc/client": "^9.27.4",
+    "@trpc/react": "^9.27.4",
+    "@trpc/server": "^10.12.0",
+    "assert": "^2.0.0",
+    "axios": "^0.27.2",
+    "buffer": "^6.0.3",
+    "caniuse-lite": "^1.0.30001460",
+    "circular-json": "^0.5.9",
+    "compress-json": "^2.0.1",
+    "crypto-browserify": "^3.12.0",
+    "draggable": "^4.2.0",
+    "file-saver": "^2.0.5",
+    "fs": "^0.0.1-security",
+    "google-protobuf": "^3.20.1",
+    "https-browserify": "^1.0.0",
+    "images": "^3.2.4",
+    "ipfs-http-client": "^60.0.0",
+    "merge-images": "^2.0.0",
+    "os": "^0.1.2",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "protobufjs": "^7.0.0",
+    "qr-scanner": "^1.4.1",
+    "qrcode": "^1.5.0",
+    "react": "^18.1.0",
+    "react-app-rewired": "^2.2.1",
+    "react-dom": "^18.1.0",
+    "react-easy-crop": "^4.5.0",
+    "react-image-process": "^0.2.4",
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "tesseract.js": "^2.0.0-beta.1",
+    "typescript": "^4.9.5",
+    "uint8array-json-parser": "^0.0.2",
+    "web-vitals": "^2.1.4",
+    "zod": "^3.20.6"
+  },
+  "scripts": {
+    "start": "set PORT=6000 && react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "ipfs-http-client": "^60.0.0"
+  },
+  "proxy": "http://localhost:3000"
+}

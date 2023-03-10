@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package boundingBoxPackage;
+
+message BoundingBox { 
+    float x = 1;
+    float y = 2;
+    float width = 3;
+    float height = 4;
+    string type = 5;
+    string label = 6;
+    string regex = 7;
+}
+
+message BoundingBoxes {
+    repeated BoundingBox boundingBoxItem = 1;
+}

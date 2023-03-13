@@ -26,12 +26,15 @@ import QrScanner from 'qr-scanner'
 import mergeImages from 'merge-images'
 import theme from '../utils/theme'
 import '@recogito/annotorious/dist/annotorious.min.css'
-import CircularJSON from 'circular-json';
 
+// import apiUrl from '../cofing.json'
+// import axios from 'axios';
 
 import Plugin from '../customPlugin/plugin/plugin'
 
 import { create } from "ipfs-http-client";
+
+const axios = require("axios")
 
 const Input = styled('input')({
   display: 'none',
@@ -40,7 +43,7 @@ const Input = styled('input')({
 const DegreePage = () => {
 
   // For printing different values from ahmed's code.
-  const [response, setResponse] = useState(null);
+  // const [response, setResponse] = useState(null);
 
   // Ref to the image DOM element
   const imgEl = useRef()
@@ -528,7 +531,7 @@ const DegreePage = () => {
         // console.log(cid);
         const ImgHash = `http://127.0.0.1:8080/ipfs/${cid.toString()}/`;
         console.log('Image Hash => ', ImgHash)
-        setImgHash(imgHash)
+        setImgHash(ImgHash)
         /*****  IPFS CODE *****/
       } catch (e) {
         alert("Unable to upload image to ipfs");
@@ -537,23 +540,72 @@ const DegreePage = () => {
   }
 
   // Fetching from ahmad saleem code
-  const fetchingImage = (imgHash, boundingBoxesWithType) => {
-    fetch('/image-crop', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: CircularJSON.stringify({
-        image_url: imgHash,
-        boundingBoxesWithType: boundingBoxesWithType
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        setResponse(data.message);
-      })
-      .catch(error => console.error(error));
+  // const endPoint = apiUrl + "/image-crop"
+  const fetchingImage = async (imgHash, bb) => {
+    const bodyOfJson = {
+      image_url: imgHash,
+      boundingBoxesWithType: bb
+    }
+    try {
+      fetch('http://127.0.0.1:6000/image-crop', {
+        method: 'POST',
+        headers: {
+          "Accept": "application/json, text/plain, /",
+          "Content-Type": "multipart/form-data"
+        },
+        body: JSON.stringify(bodyOfJson)
+      }).then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error));
+    } catch (error) {
+      throw new Error('Send error', error)
+    }
   }
+
+  // const fetchingImage = async (imgHash, boundingBoxes) => {
+  //   try {
+  //     const coordinates = boundingBoxes.map((box) => {
+  //       return {
+  //         left: parseInt(box.left),
+  //         top: parseInt(box.top),
+  //         width: parseInt(box.width),
+  //         height: parseInt(box.height),
+  //       };
+  //     });
+
+  //     const response = await axios.post("http://localhost:6000/image-crop", {
+  //       image_url: imgHash,
+  //       coordinates,
+  //     });
+
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+  // function fetchingImage(imgHash, bb) {
+  //   try {
+  //     const bodyOfJson = {
+  //       image_url: imgHash,
+  //       boundingBoxesWithType:bb 
+  //     }
+  //     axios({
+  //       method: 'post',
+  //       url: 'http://localhost:6000/image-crop',
+  //       data: {
+  //         image_url: imgHash,
+  //         boundingBoxesWithType: bb
+  //       }
+
+  //     })
+  //       .then(function (response) {
+  //         console.log(response)
+  //         alert(response.data.message)
+  //       });
+  //   } catch (error) {
+  //     alert(error)
+  //   }
+  // }
 
   const boundingBoxModalJSX = (
     <Dialog open={openBoundingBoxModal} onClose={handleCloseBoundingBoxModal}>
@@ -702,10 +754,10 @@ const DegreePage = () => {
             sx={{ textTransform: 'capitalize' }}
             disableElevation
             variant="contained"
-            onClick={fetchingImage}
+            onClick={() => fetchingImage(imgHash, boundingBoxesWithType)}
             disabled={!degreeImage}
           >
-            Download Image in
+            Download Image in folder
           </Button>
         </Grid>
 
@@ -810,12 +862,11 @@ const DegreePage = () => {
             {/* </div> */}
           </Grid>
         )}
+
       </Grid>
-
-      {response && <p>Response: {response}</p>}
-
     </Grid >
   )
 }
+
 
 export default DegreePage

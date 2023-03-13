@@ -52,7 +52,7 @@
     "zod": "^3.20.6"
   },
   "scripts": {
-    "start": "set PORT=6000 && react-scripts start",
+    "start": "set PORT=3000 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -77,6 +77,5 @@
   },
   "devDependencies": {
     "ipfs-http-client": "^60.0.0"
-  },
-  "proxy": "http://localhost:3000"
+  }
 }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Annotorious } from '@recogito/annotorious'
 import { createWorker } from 'tesseract.js'
 import { saveAs } from 'file-saver'
+
 import {
   Button,
   Grid,
@@ -18,6 +19,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material'
+
 import { styled } from '@mui/material/styles'
 import CloseIcon from '@mui/icons-material/Close'
 import QRCode from 'qrcode'
@@ -26,15 +28,9 @@ import QrScanner from 'qr-scanner'
 import mergeImages from 'merge-images'
 import theme from '../utils/theme'
 import '@recogito/annotorious/dist/annotorious.min.css'
-
-// import apiUrl from '../cofing.json'
 // import axios from 'axios';
-
 import Plugin from '../customPlugin/plugin/plugin'
-
 import { create } from "ipfs-http-client";
-
-const axios = require("axios")
 
 const Input = styled('input')({
   display: 'none',
@@ -530,7 +526,7 @@ const DegreePage = () => {
         const { cid } = await ipfs.add(file);
         // console.log(cid);
         const ImgHash = `http://127.0.0.1:8080/ipfs/${cid.toString()}/`;
-        console.log('Image Hash => ', ImgHash)
+        // console.log('Image Hash => ', ImgHash)
         setImgHash(ImgHash)
         /*****  IPFS CODE *****/
       } catch (e) {
@@ -542,24 +538,37 @@ const DegreePage = () => {
   // Fetching from ahmad saleem code
   // const endPoint = apiUrl + "/image-crop"
   const fetchingImage = async (imgHash, bb) => {
-    const bodyOfJson = {
-      image_url: imgHash,
-      boundingBoxesWithType: bb
-    }
+    let jsonObject = []
+    jsonObject.push(imgHash, bb)
+    const jsonData = JSON.stringify(jsonObject)
+
     try {
-      fetch('http://127.0.0.1:6000/image-crop', {
+      fetch('http://iahmad31.pythonanywhere.com/image-crop', {
         method: 'POST',
         headers: {
-          "Accept": "application/json, text/plain, /",
-          "Content-Type": "multipart/form-data"
+          "Accept": "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(bodyOfJson)
-      }).then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error(error));
-    } catch (error) {
-      throw new Error('Send error', error)
+        body: JSON.stringify(jsonData),
+      })
     }
+    catch (error) {
+      console.log(error)
+    }
+
+    // try {
+    //   axios({
+    //     method: 'post',
+    //     url: 'http://iahmad31.pythonanywhere.com/image-crop',
+    //     data: { jsonData }
+    //   })
+    //     .then(function (response) {
+    //       console.log(response)
+    //       alert(response.data.message)
+    //     });
+    // } catch (error) {
+    //   alert(error)
+    // }
   }
 
   // const fetchingImage = async (imgHash, boundingBoxes) => {

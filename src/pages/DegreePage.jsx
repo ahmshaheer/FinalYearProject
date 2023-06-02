@@ -29,7 +29,7 @@ import mergeImages from 'merge-images'
 import theme from '../utils/theme'
 import '@recogito/annotorious/dist/annotorious.min.css'
 // import axios from 'axios';
-import Plugin from '../customPlugin/plugin/plugin'
+// import Plugin from '../customPlugin/plugin/plugin'
 import { create } from "ipfs-http-client";
 
 const Input = styled('input')({
@@ -157,22 +157,8 @@ const DegreePage = () => {
     if (file) {
       reader.readAsDataURL(file)
     }
-    console.log(file)
+    // console.log(file)
   }
-
-  // const onDegreeImageChange = (e) => {
-  //   const data = e.target.files[0];
-  //   const reader = new FileReader();
-  //   reader.readAsArrayBuffer(data);
-  //   reader.onloadend = () => {
-  //     if (reader.readyState === 2) {
-  //       setDegreeImage(reader.result)
-  //     }
-  //     // setDegreeImage(data)
-  //     // setFile(data); // make file hook to set file
-  //   };
-  //   e.preventDefault();
-  // }
 
   // Initialize Annotorious when the component
   // mounts, and keep the current 'anno'
@@ -184,11 +170,13 @@ const DegreePage = () => {
       // Initialize annotorious
       annotorious = new Annotorious({
         image: imgEl.current,
-        widgets: [
-          Plugin, {
-            widget: 'TAG',
-            vocabulary: predefinedDegreeTags
-          }],
+        widgets: [{
+          // Plugin, {
+          widget: 'TAG',
+          vocabulary: predefinedDegreeTags
+        }
+          // }
+        ],
       })
 
       // EVENT: Fires when the annotation is created
@@ -335,18 +323,27 @@ const DegreePage = () => {
 
     setDegreeImageBoundries(rects)
 
-    // S,D,Regex? (if D),Coords (x,y,width, height)
+    // S,D,Regex? (if D),Coords (x,y,width, height) + Xaxis and Yaxis
     let dataStr = ''
 
     for (let i = 0; i < boundingBoxesWithType.length; i++) {
       dataStr += `${boundingBoxesWithType[i].type === 'static' ? 'S' : 'D'},${boundingBoxesWithType[i].type === 'dynamic' &&
         boundingBoxesWithType[i].regex
         },${boundingBoxesWithType[i].x},${boundingBoxesWithType[i].y},${boundingBoxesWithType[i].width
-        },${boundingBoxesWithType[i].height}:`
+        },${boundingBoxesWithType[i].height}, `
+
     }
+    dataStr += ` XAxis => ${QRCodeX}, Y Axis =>  ${QRCodeY}< `;
+    // dataStr += ` Length of QR Code: 164px: `
+
+    let ratio = (currentBoundingBox.y - QRCodeY) / 212
+
+    let findingDistanceFromDifferentAngles = `Top => ${QRCodeY - degreeImage.height / 212}, Left => ${QRCodeX - degreeImage.width / 212}, Right => ${QRCodeX - degreeImage.width / 212}, Bottom => ${QRCodeX - degreeImage.height / 212} `
+
+    dataStr += `Ratio: ${ratio}, ${findingDistanceFromDifferentAngles} `;
+    console.log(dataStr)
 
     // Draw the QRCode on degree image.
-
     QRCode.toDataURL(
       document.getElementById('qrcode-canvas'),
       dataStr,
@@ -415,7 +412,6 @@ const DegreePage = () => {
             console.log('QRCODE DETECTED')
 
             console.log({ result })
-
             // New Code with Comma Seprated String
             const splittedResult = result.split(':')
 
@@ -434,7 +430,6 @@ const DegreePage = () => {
                 height: boundingBox[5],
               })
             }
-
             console.log({ boundingBoxes })
 
             // Transform the bounding boxes according to annotorious
@@ -443,7 +438,7 @@ const DegreePage = () => {
               (boundingBox, index) => {
                 return {
                   '@context': 'http://www.w3.org/ns/anno.jsonld',
-                  id: `#a88b22d0-6106-4872-9435-c78b5e89fede-${index}`,
+                  id: `#a88b22d0 - 6106 - 4872 - 9435 - c78b5e89fede - ${index} `,
                   type: 'Annotation',
                   body: [
                     {
@@ -455,7 +450,7 @@ const DegreePage = () => {
                     selector: {
                       type: 'FragmentSelector',
                       conformsTo: 'http://www.w3.org/TR/media-frags/',
-                      value: `xywh=pixel:${boundingBox.x},${boundingBox.y},${boundingBox.width},${boundingBox.height}`,
+                      value: `xywh = pixel:${boundingBox.x},${boundingBox.y},${boundingBox.width},${boundingBox.height} `,
                     },
                   },
                 }
@@ -477,6 +472,7 @@ const DegreePage = () => {
     if (file) {
       reader.readAsDataURL(file)
     }
+
   }
 
   // Drag and Drop Feature for QRCode.
@@ -496,9 +492,9 @@ const DegreePage = () => {
 
   const handleSubmit = () => {
     const transformedCurrentBoundingBox = {
-      ...currentBoundingBox,
       type: isBoundingBoxStatic,
       regex: regex,
+      ...currentBoundingBox,
     }
 
     if (isBoundingBoxStatic === `static`)
@@ -537,82 +533,23 @@ const DegreePage = () => {
 
   // Fetching from ahmad saleem code
   // const endPoint = apiUrl + "/image-crop"
-  const fetchingImage = async (imgHash, bb) => {
-    let jsonObject = []
-    jsonObject.push(imgHash, bb)
-    const jsonData = JSON.stringify(jsonObject)
+  // const fetchingImage = async (imgHash, bb) => {
+  //   let jsonObject = []
+  //   jsonObject.push(imgHash, bb)
+  //   const jsonData = JSON.stringify(jsonObject)
 
-    try {
-      fetch('http://iahmad31.pythonanywhere.com/image-crop', {
-        method: 'POST',
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(jsonData),
-      })
-    }
-    catch (error) {
-      console.log(error)
-    }
-
-    // try {
-    //   axios({
-    //     method: 'post',
-    //     url: 'http://iahmad31.pythonanywhere.com/image-crop',
-    //     data: { jsonData }
-    //   })
-    //     .then(function (response) {
-    //       console.log(response)
-    //       alert(response.data.message)
-    //     });
-    // } catch (error) {
-    //   alert(error)
-    // }
-  }
-
-  // const fetchingImage = async (imgHash, boundingBoxes) => {
   //   try {
-  //     const coordinates = boundingBoxes.map((box) => {
-  //       return {
-  //         left: parseInt(box.left),
-  //         top: parseInt(box.top),
-  //         width: parseInt(box.width),
-  //         height: parseInt(box.height),
-  //       };
-  //     });
-
-  //     const response = await axios.post("http://localhost:6000/image-crop", {
-  //       image_url: imgHash,
-  //       coordinates,
-  //     });
-
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-  // function fetchingImage(imgHash, bb) {
-  //   try {
-  //     const bodyOfJson = {
-  //       image_url: imgHash,
-  //       boundingBoxesWithType:bb 
-  //     }
-  //     axios({
-  //       method: 'post',
-  //       url: 'http://localhost:6000/image-crop',
-  //       data: {
-  //         image_url: imgHash,
-  //         boundingBoxesWithType: bb
-  //       }
-
+  //     fetch('http://iahmad31.pythonanywhere.com/image-crop', {
+  //       method: 'POST',
+  //       headers: {
+  //         "Accept": "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(jsonData),
   //     })
-  //       .then(function (response) {
-  //         console.log(response)
-  //         alert(response.data.message)
-  //       });
-  //   } catch (error) {
-  //     alert(error)
+  //   }
+  //   catch (error) {
+  //     console.log(error)
   //   }
   // }
 
@@ -702,7 +639,7 @@ const DegreePage = () => {
       />
       {JSON.stringify(boundingBoxesWithType)}
 
-      {console.log('Json Format => ', JSON.stringify(boundingBoxesWithType))}
+      {/* {console.log('Json Format => ', JSON.stringify(boundingBoxesWithType))} */}
 
       {/* Degree Image Upload Button */}
       <Grid
@@ -729,14 +666,16 @@ const DegreePage = () => {
               variant="contained"
               component="span"
             >
-              Upload Degree
+              Upload Document
             </Button>
           </label>
         </Grid>
 
         <Grid item>
           <Button
-            sx={{ textTransform: 'capitalize' }}
+            sx={{
+              textTransform: 'capitalize',
+            }}
             disableElevation
             variant="contained"
             onClick={handleQRCode}
@@ -758,7 +697,7 @@ const DegreePage = () => {
           </Button>
         </Grid>
 
-        <Grid item>
+        {/* <Grid item>
           <Button
             sx={{ textTransform: 'capitalize' }}
             disableElevation
@@ -768,7 +707,7 @@ const DegreePage = () => {
           >
             Download Image in folder
           </Button>
-        </Grid>
+        </Grid> */}
 
         <Grid item>
           <label htmlFor="image-with-qr-code">
@@ -795,7 +734,7 @@ const DegreePage = () => {
           <Grid sx={{ display: degreeImage ? 'block' : 'none' }} item>
             <img
               id="degree-img"
-              // style={{ height: '650px', width: `100%` }}
+              style={{ height: '930px', width: `1200px` }}
               ref={imgEl}
               src={degreeImage ? degreeImage : './demo.png'}
               alt="user-degree-img"
@@ -804,75 +743,33 @@ const DegreePage = () => {
               style={{
                 visibility: isBBoxFinalized ? 'visible' : 'hidden',
                 position: 'absolute',
-                top: 375,
-                left: 260,
+                top: 193,
+                left: 124,
+
               }}
-              id="qrcode-canvas"
-            ></canvas>
+              id="qrcode-canvas"></canvas>
           </Grid>
         </div>
         {/* Drawing Tools */}
-        {degreeImage && (
-          <Grid
-            sx={{ margin: '1em 0' }}
-            gap={4}
-            item
-            container
-            justifyContent="center"
-          >
-            <Grid item>
-              {/* <Button
-                disabled={tool === 'rect'}
-                variant="contained"
-                color="secondary"
-                disableElevation
-                onClick={handleRectangleTool}
-              >
-                Rectangle
-              </Button> */}
-              <Button onClick={toggleTool}>
-                {tool === 'rect' ? 'RECTANGLE' : 'POLYGON'}
-              </Button>
-            </Grid>
-            {/* <Button
-              sx={{ textTransform: 'capitalize' }}
-              component="span"
-              onClick={downloadInCSV}
+        {
+          degreeImage && (
+            <Grid
+              sx={{ margin: '1em 0' }}
+              gap={4}
+              item
+              container
+              justifyContent="center"
             >
-              Download
-            </Button> */}
-            <Grid item>
-              {/* <Button
-                disabled={tool === 'polygon'}
-                variant="contained"
-                color="secondary"
-                disableElevation
-                onClick={handlePolygonTool}
-              >
-                Polygon
-              </Button> */}
-            </Grid>
-            {/* <div>
-              <div style={{ margin: '30px 0' }}>
-                <button onClick={toggleTool}>
+              <Grid item>
+                <Button onClick={toggleTool}>
                   {tool === 'rect' ? 'RECTANGLE' : 'POLYGON'}
-                </button>
-              </div> */}
+                </Button>
+              </Grid>
+            </Grid>
+          )
+        }
 
-            {/* <img
-                style={{
-                  width: '900px',
-                  height: '550px',
-                }}
-                ref={imgEl}
-                src="/demo-pic.jpg"
-                alt="demo-pic"
-              /> */}
-            {/* </div> */}
-          </Grid>
-        )}
-
-      </Grid>
+      </Grid >
     </Grid >
   )
 }

@@ -672,7 +672,7 @@ const HomePage = () => {
                 variant="contained"
                 component="span"
               >
-                Upload Degree
+                Upload Document
               </Button>}
             </label>
           </Grid>

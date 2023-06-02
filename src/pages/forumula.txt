@@ -1,0 +1,4 @@
+top= origin of qr in y axis/measurement of qr code
+left=originof qr in x axis/measurement of qr code
+right=total width-origin of qr in x axis/measurementof qrcode
+bottom=total width - origin of qr in y axis/measurement of qr code

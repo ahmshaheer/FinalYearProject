@@ -533,25 +533,25 @@ const DegreePage = () => {
 
   // Fetching from ahmad saleem code
   // const endPoint = apiUrl + "/image-crop"
-  // const fetchingImage = async (imgHash, bb) => {
-  //   let jsonObject = []
-  //   jsonObject.push(imgHash, bb)
-  //   const jsonData = JSON.stringify(jsonObject)
+  const fetchingImage = async (imgHash, bb) => {
+    let jsonObject = []
+    jsonObject.push(imgHash, bb)
+    const jsonData = JSON.stringify(jsonObject)
 
-  //   try {
-  //     fetch('http://iahmad31.pythonanywhere.com/image-crop', {
-  //       method: 'POST',
-  //       headers: {
-  //         "Accept": "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(jsonData),
-  //     })
-  //   }
-  //   catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+    try {
+      fetch('http://iahmad31.pythonanywhere.com/image-crop', {
+        method: 'POST',
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(jsonData),
+      })
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
 
   const boundingBoxModalJSX = (
     <Dialog open={openBoundingBoxModal} onClose={handleCloseBoundingBoxModal}>
@@ -697,7 +697,7 @@ const DegreePage = () => {
           </Button>
         </Grid>
 
-        {/* <Grid item>
+        <Grid item>
           <Button
             sx={{ textTransform: 'capitalize' }}
             disableElevation
@@ -707,7 +707,7 @@ const DegreePage = () => {
           >
             Download Image in folder
           </Button>
-        </Grid> */}
+        </Grid>
 
         <Grid item>
           <label htmlFor="image-with-qr-code">

@@ -533,25 +533,51 @@ const DegreePage = () => {
 
   // Fetching from ahmad saleem code
   // const endPoint = apiUrl + "/image-crop"
+  // const fetchingImage = (imgHash, bb) => {
+  //   let jsonObject = []
+  //   jsonObject.push(imgHash, bb)
+  //   const jsonData = JSON.stringify(jsonObject)
+
+  //   try {
+  //     fetch('http://localhost:3001/image-crop', {
+  //       method: 'POST',
+  //       headers: {
+  //         // "Accept": "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(jsonData),
+  //     })
+  //   }
+  //   catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
   const fetchingImage = async (imgHash, bb) => {
-    let jsonObject = []
-    jsonObject.push(imgHash, bb)
-    const jsonData = JSON.stringify(jsonObject)
+    const jsonData = {
+      imgHash: imgHash,
+      bb: bb
+    };
 
     try {
-      fetch('http://iahmad31.pythonanywhere.com/image-crop', {
+      const response = await fetch('http://localhost:3001/image-crop', {
         method: 'POST',
         headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(jsonData),
-      })
+        body: JSON.stringify(jsonData)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.message);
+      } else {
+        console.log('Error:', response.status);
+      }
+    } catch (error) {
+      console.log(error);
     }
-    catch (error) {
-      console.log(error)
-    }
-  }
+  };
 
   const boundingBoxModalJSX = (
     <Dialog open={openBoundingBoxModal} onClose={handleCloseBoundingBoxModal}>
